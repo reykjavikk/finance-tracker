@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Финансовый Трекер — Дашборд</title>
+    <style>
+        :root {
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --text-main: #2d3748;
+            --primary: #4a5568;
+            --success: #2f855a;
+            --danger: #9b2c2c;
+            --border: #e2e8f0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        h2 { margin: 0; font-weight: 600; }
+
+        /* Стили карточек дашборда */
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            border: 1px solid var(--border);
+        }
+
+        .card-title {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #718096;
+            margin-bottom: 10px;
+        }
+
+        .card-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        .balance-positive { color: var(--success); }
+        .balance-negative { color: var(--danger); }
+        .income-val { color: var(--success); }
+        .outcome-val { color: var(--danger); }
+
+        /* Две колонки: Форма и Транзакции */
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .main-content { grid-template-columns: 1fr; }
+        }
+
+        .block {
+            background: var(--card-bg);
+            padding: 25px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+        }
+
+        .block-title {
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+            border-bottom: 2px solid var(--bg-color);
+            padding-bottom: 10px;
+        }
+
+        /* Форма */
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            box-sizing: border-box;
+        }
+        .text-danger {
+            color: var(--danger);
+            font-size: 0.8rem;
+            margin-top: 5px;
+        }
+        .btn-submit {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            width: 100%;
+            font-weight: 600;
+        }
+        .btn-submit:hover { opacity: 0.9; }
+
+        /* Список транзакций */
+        .tx-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .tx-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        .tx-item:last-child { border-bottom: none; }
+        .tx-info .tx-cat { font-weight: 600; }
+        .tx-info .tx-desc { font-size: 0.85rem; color: #718096; margin-top: 2px; }
+        .tx-date { font-size: 0.8rem; color: #a0aec0; }
+        .tx-amount { font-weight: 700; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    {% if request.user.is_authenticated %}
+        <header>
+            <h2>Рады видеть вас, {{ request.user.username }} 👋</h2>
+            <form action="{% url 'wallet:logout' %}" method="post" style="display: inline;">
+    {% csrf_token %}
+    <button type="submit" style="background: none; border: none; color: #718096; cursor: pointer; font-family: inherit; font-size: 0.9rem; padding: 0;">
+        Выйти
+    </button>
+</form>
+        </header>
+
+        <div class="dashboard">
+            <div class="card">
+                <div class="card-title">Текущий Баланс</div>
+                <div class="card-value {% if balance >= 0 %}balance-positive{% else %}balance-negative{% endif %}">
+                    {{ balance }} ₽
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-title">Всего Доходов</div>
+                <div class="card-value income-val">+ {{ income }} ₽</div>
+            </div>
+            <div class="card">
+                <div class="card-title">Всего Расходов</div>
+                <div class="card-value outcome-val">- {{ outcome }} ₽</div>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="block">
+                <h3 class="block-title">Новая операция</h3>
+                <form method="POST" action="">
+                    {% csrf_token %}
+                    {% for field in form %}
+                        <div class="form-group">
+                            {{ field.label_tag }}
+                            {{ field }}
+                            {% if field.errors %}
+                                <div class="text-danger">
+                                    {{ field.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                    <button type="submit" class="btn-submit">Добавить</button>
+                </form>
+            </div>
+
+            <div class="block">
+                <h3 class="block-title">История транзакций</h3>
+                <ul class="tx-list">
+                    {% for tr in transactions %}
+                        <li class="tx-item">
+                            <div class="tx-info">
+                                <div class="tx-cat">{{ tr.category.name }}</div>
+                                <div class="tx-desc">{{ tr.description }}</div>
+                            </div>
+                            <div style="text-align: right;">
+                                <div class="tx-amount {% if tr.category.type == 'IN' %}income-val{% else %}outcome-val{% endif %}">
+                                    {% if tr.category.type == 'IN' %}+{% else %}-{% endif %} {{ tr.amount }} ₽
+                                </div>
+                                <div class="tx-date">{{ tr.creation|date:"d.m.Y H:i" }}</div>
+                            </div>
+                        </li>
+                    {% empty %}
+                        <li style="color: #a0aec0; text-align: center; padding: 20px;">История операций пока пуста.</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    <h3>Расходы по категориям</h3>
+<ul>
+    {% for cat in categories %}
+        <li><strong>{{ cat.name }}:</strong> {{ cat.total_spent }} ₽</li>
+    {% empty %}
+        <li>Категорий пока нет</li>
+    {% endfor %}
+</ul>
+
+    {% else %}
+        <div style="text-align: center; margin-top: 100px;" class="block">
+            <h2>Добро пожаловать в Финансовый Трекер</h2>
+            <p>Пожалуйста, войдите в систему для управления кошельком.</p>
+            <p><a href="{% url 'wallet:login' %}" class="btn-submit" style="display: inline-block; width: auto; text-decoration: none;">Войти в аккаунт</a></p>
+        </div>
+    {% endif %}
+</div>
+
+</body>
+</html>
