@@ -1,0 +1,6 @@
+Django==6.0.6
+psycopg[binary]==3.3.4
+django-redis==7.0.0
+python-dotenv==1.2.3
+pytest==9.1.1
+pytest-django==4.14.0

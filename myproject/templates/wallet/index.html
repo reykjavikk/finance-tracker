@@ -132,24 +132,261 @@
         }
         .btn-submit:hover { opacity: 0.9; }
 
-        /* Список транзакций */
+        /* ===== ТРАНЗАКЦИИ — WOW СТИЛЬ ===== */
+        .tx-card {
+            position: relative;
+            background: linear-gradient(135deg, #ffffff 0%, #fafcff 100%);
+            border: 1px solid rgba(226, 232, 240, 0.6);
+            border-radius: 16px;
+            box-shadow:
+                0 1px 3px rgba(0,0,0,0.02),
+                0 8px 32px rgba(0,0,0,0.04);
+            overflow: hidden;
+        }
+        .tx-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #2f855a, #48bb78, #f6ad55, #fc8181, #c53030);
+            opacity: 0.5;
+        }
+        .tx-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 18px 24px 0 24px;
+        }
+        .tx-header-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #1a202c;
+            margin: 0;
+        }
+        .tx-header-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+        }
+        .tx-count-badge {
+            font-size: 0.7rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #edf2f7, #e2e8f0);
+            color: #4a5568;
+            padding: 3px 12px;
+            border-radius: 20px;
+            letter-spacing: 0.02em;
+        }
+        .tx-search {
+            margin: 14px 24px 0 24px;
+            position: relative;
+        }
+        .tx-search input {
+            width: 100%;
+            padding: 9px 14px 9px 36px;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            background: #f7fafc;
+            color: #2d3748;
+            outline: none;
+            transition: all 0.25s;
+            box-sizing: border-box;
+        }
+        .tx-search input:focus {
+            border-color: #667eea;
+            background: #fff;
+            box-shadow: 0 0 0 3px rgba(102,126,234,0.12);
+        }
+        .tx-search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #a0aec0;
+            font-size: 0.85rem;
+            pointer-events: none;
+        }
+        .tx-wrapper {
+            max-height: 440px;
+            overflow-y: auto;
+            padding: 12px 18px 18px 18px;
+            scrollbar-width: thin;
+            scrollbar-color: #cbd5e0 transparent;
+        }
+        .tx-wrapper::-webkit-scrollbar { width: 5px; }
+        .tx-wrapper::-webkit-scrollbar-track { background: transparent; margin: 8px 0; }
+        .tx-wrapper::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #cbd5e0, #a0aec0);
+            border-radius: 10px;
+        }
         .tx-list {
             list-style: none;
             padding: 0;
             margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
         }
         .tx-item {
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            padding: 15px 0;
-            border-bottom: 1px solid var(--border);
+            gap: 14px;
+            padding: 14px 16px;
+            border-radius: 12px;
+            background: #ffffff;
+            border: 1px solid #edf2f7;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: default;
+            position: relative;
+            animation: txFadeIn 0.4s ease both;
         }
-        .tx-item:last-child { border-bottom: none; }
-        .tx-info .tx-cat { font-weight: 600; }
-        .tx-info .tx-desc { font-size: 0.85rem; color: #718096; margin-top: 2px; }
-        .tx-date { font-size: 0.8rem; color: #a0aec0; }
-        .tx-amount { font-weight: 700; }
+        .tx-item::after {
+            content: '';
+            position: absolute;
+            left: 0; top: 8px; bottom: 8px;
+            width: 3px;
+            border-radius: 0 3px 3px 0;
+            opacity: 0;
+            transition: opacity 0.25s;
+        }
+        .tx-item.income::after { background: linear-gradient(180deg, #48bb78, #2f855a); }
+        .tx-item.outcome::after { background: linear-gradient(180deg, #fc8181, #c53030); }
+        .tx-item:hover {
+            border-color: transparent;
+            box-shadow:
+                0 4px 16px rgba(0,0,0,0.06),
+                0 1px 3px rgba(0,0,0,0.04);
+            transform: translateY(-1px) scale(1.01);
+        }
+        .tx-item:hover::after { opacity: 1; }
+        @keyframes txFadeIn {
+            from { opacity: 0; transform: translateY(12px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        .tx-item:nth-child(1) { animation-delay: 0.02s; }
+        .tx-item:nth-child(2) { animation-delay: 0.05s; }
+        .tx-item:nth-child(3) { animation-delay: 0.08s; }
+        .tx-item:nth-child(4) { animation-delay: 0.11s; }
+        .tx-item:nth-child(5) { animation-delay: 0.14s; }
+        .tx-item:nth-child(6) { animation-delay: 0.17s; }
+        .tx-item:nth-child(7) { animation-delay: 0.20s; }
+        .tx-item:nth-child(8) { animation-delay: 0.23s; }
+        .tx-item:nth-child(9) { animation-delay: 0.26s; }
+        .tx-item:nth-child(10) { animation-delay: 0.29s; }
+        .tx-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            flex-shrink: 0;
+            position: relative;
+            transition: transform 0.25s;
+        }
+        .tx-item:hover .tx-icon { transform: scale(1.08) rotate(-2deg); }
+        .tx-icon.income {
+            background: linear-gradient(135deg, #f0fff4, #dcfce7);
+            box-shadow: 0 2px 8px rgba(47,133,90,0.10);
+        }
+        .tx-icon.outcome {
+            background: linear-gradient(135deg, #fff5f5, #fed7d7);
+            box-shadow: 0 2px 8px rgba(155,44,44,0.08);
+        }
+        .tx-body { flex: 1; min-width: 0; }
+        .tx-top {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 3px;
+        }
+        .tx-cat {
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: #1a202c;
+        }
+        .tx-type-badge {
+            font-size: 0.6rem;
+            font-weight: 800;
+            padding: 2px 9px;
+            border-radius: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            border: 1px solid transparent;
+        }
+        .tx-type-badge.income {
+            background: linear-gradient(135deg, #f0fff4, #dcfce7);
+            color: #276749;
+            border-color: rgba(47,133,90,0.12);
+        }
+        .tx-type-badge.outcome {
+            background: linear-gradient(135deg, #fff5f5, #fed7d7);
+            color: #9b2c2c;
+            border-color: rgba(155,44,44,0.12);
+        }
+        .tx-desc {
+            font-size: 0.8rem;
+            color: #718096;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .tx-right { text-align: right; flex-shrink: 0; }
+        .tx-amount {
+            font-weight: 800;
+            font-size: 1.05rem;
+            letter-spacing: -0.01em;
+        }
+        .tx-amount.income {
+            background: linear-gradient(135deg, #2f855a, #48bb78);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .tx-amount.outcome {
+            background: linear-gradient(135deg, #9b2c2c, #fc8181);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .tx-date {
+            font-size: 0.72rem;
+            color: #a0aec0;
+            margin-top: 3px;
+            font-weight: 500;
+        }
+        .tx-empty {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 48px 20px;
+            color: #a0aec0;
+        }
+        .tx-empty-icon {
+            font-size: 3rem;
+            margin-bottom: 12px;
+            opacity: 0.5;
+        }
+        .tx-empty-text {
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+        .tx-empty-sub {
+            font-size: 0.8rem;
+            margin-top: 4px;
+        }
     </style>
 </head>
 <body>
@@ -158,28 +395,31 @@
     {% if request.user.is_authenticated %}
         <header>
             <h2>Рады видеть вас, {{ request.user.username }} 👋</h2>
-            <form action="{% url 'wallet:logout' %}" method="post" style="display: inline;">
-    {% csrf_token %}
-    <button type="submit" style="background: none; border: none; color: #718096; cursor: pointer; font-family: inherit; font-size: 0.9rem; padding: 0;">
-        Выйти
-    </button>
-</form>
+            <div class="header-links" style="display: flex; align-items: center; gap: 15px;">
+                <a href="{% url 'wallet:categories' %}" style="color: #718096; text-decoration: none; font-size: 0.9rem;">Категории 📂</a>
+                <form action="{% url 'wallet:logout' %}" method="post" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" style="background: none; border: none; color: #718096; cursor: pointer; font-family: inherit; font-size: 0.9rem; padding: 0;">
+                        Выйти
+                    </button>
+                </form>
+            </div>
         </header>
 
         <div class="dashboard">
             <div class="card">
                 <div class="card-title">Текущий Баланс</div>
                 <div class="card-value {% if balance >= 0 %}balance-positive{% else %}balance-negative{% endif %}">
-                    {{ balance }} ₽
+                    {{ balance|floatformat:2 }} ₽
                 </div>
             </div>
             <div class="card">
                 <div class="card-title">Всего Доходов</div>
-                <div class="card-value income-val">+ {{ income }} ₽</div>
+                <div class="card-value income-val">+ {{ income|floatformat:2 }} ₽</div>
             </div>
             <div class="card">
                 <div class="card-title">Всего Расходов</div>
-                <div class="card-value outcome-val">- {{ outcome }} ₽</div>
+                <div class="card-value outcome-val">- {{ outcome|floatformat:2 }} ₽</div>
             </div>
         </div>
 
@@ -203,36 +443,82 @@
                 </form>
             </div>
 
-            <div class="block">
-                <h3 class="block-title">История транзакций</h3>
-                <ul class="tx-list">
+            <div class="tx-card">
+                <div class="tx-header">
+                    <h3 class="tx-header-title">
+                        <span class="tx-header-icon">⟳</span>
+                        История транзакций
+                    </h3>
+                    <span class="tx-count-badge">{{ transactions|length }}</span>
+                </div>
+                <div class="tx-search">
+                    <span class="tx-search-icon">🔍</span>
+                    <input type="text" placeholder="Поиск по транзакциям..." oninput="filterTx(this.value)">
+                </div>
+                <div class="tx-wrapper">
+                <ul class="tx-list" id="txList">
                     {% for tr in transactions %}
-                        <li class="tx-item">
-                            <div class="tx-info">
-                                <div class="tx-cat">{{ tr.category.name }}</div>
-                                <div class="tx-desc">{{ tr.description }}</div>
+                        <li class="tx-item {% if tr.category.type == 'IN' %}income{% else %}outcome{% endif %}">
+                            <div class="tx-icon {% if tr.category.type == 'IN' %}income{% else %}outcome{% endif %}">
+                                {% if 'зарплат' in tr.category.name.lower or 'работ' in tr.category.name.lower or 'доход' in tr.category.name.lower %}💰
+                                {% elif 'продукт' in tr.category.name.lower or 'еда' in tr.category.name.lower or 'магазин' in tr.category.name.lower %}🛒
+                                {% elif 'транспорт' in tr.category.name.lower or 'такси' in tr.category.name.lower or 'бензин' in tr.category.name.lower or 'метро' in tr.category.name.lower %}🚗
+                                {% elif 'кафе' in tr.category.name.lower or 'ресторан' in tr.category.name.lower or 'кофе' in tr.category.name.lower or 'обед' in tr.category.name.lower %}☕
+                                {% elif 'развлечен' in tr.category.name.lower or 'кино' in tr.category.name.lower or 'игр' in tr.category.name.lower %}🎮
+                                {% elif 'здоров' in tr.category.name.lower or 'аптек' in tr.category.name.lower or 'врач' in tr.category.name.lower %}💊
+                                {% elif 'связь' in tr.category.name.lower or 'телефон' in tr.category.name.lower or 'интернет' in tr.category.name.lower %}📱
+                                {% elif 'жиль' in tr.category.name.lower or 'квартир' in tr.category.name.lower or 'аренд' in tr.category.name.lower %}🏠
+                                {% elif 'одежд' in tr.category.name.lower or 'обув' in tr.category.name.lower %}👕
+                                {% elif 'образован' in tr.category.name.lower or 'курс' in tr.category.name.lower or 'книг' in tr.category.name.lower %}📚
+                                {% elif 'спорт' in tr.category.name.lower or 'фитнес' in tr.category.name.lower %}🏋️
+                                {% elif 'подар' in tr.category.name.lower or 'праздник' in tr.category.name.lower %}🎁
+                                {% elif tr.category.type == 'IN' %}📈
+                                {% else %}📉{% endif %}
                             </div>
-                            <div style="text-align: right;">
-                                <div class="tx-amount {% if tr.category.type == 'IN' %}income-val{% else %}outcome-val{% endif %}">
-                                    {% if tr.category.type == 'IN' %}+{% else %}-{% endif %} {{ tr.amount }} ₽
+                            <div class="tx-body">
+                                <div class="tx-top">
+                                    <span class="tx-cat">{{ tr.category.name }}</span>
+                                    <span class="tx-type-badge {% if tr.category.type == 'IN' %}income{% else %}outcome{% endif %}">
+                                        {{ tr.category.type }}
+                                    </span>
+                                </div>
+                                <div class="tx-desc">{{ tr.description|default:"—" }}</div>
+                            </div>
+                            <div class="tx-right">
+                                <div class="tx-amount {% if tr.category.type == 'IN' %}income{% else %}outcome{% endif %}">
+                                    {% if tr.category.type == 'IN' %}+{% else %}-{% endif %}{{ tr.amount|floatformat:2 }} ₽
                                 </div>
                                 <div class="tx-date">{{ tr.creation|date:"d.m.Y H:i" }}</div>
+                                <div style="margin-top: 4px;">
+                                    <a href="{% url 'wallet:transaction_update' tr.pk %}" title="Изменить" style="text-decoration: none; font-size: 0.75rem;">✏️</a>
+                                    <a href="{% url 'wallet:transaction_delete' tr.pk %}" title="Удалить" style="text-decoration: none; font-size: 0.75rem; margin-left: 4px;">🗑️</a>
+                                </div>
                             </div>
                         </li>
                     {% empty %}
-                        <li style="color: #a0aec0; text-align: center; padding: 20px;">История операций пока пуста.</li>
+                        <li class="tx-empty" style="list-style: none;">
+                            <div class="tx-empty-icon">📭</div>
+                            <div class="tx-empty-text">Транзакций пока нет</div>
+                            <div class="tx-empty-sub">Добавьте первую операцию через форму</div>
+                        </li>
                     {% endfor %}
                 </ul>
+                </div>
             </div>
         </div>
-    <h3>Расходы по категориям</h3>
-<ul>
-    {% for cat in categories %}
-        <li><strong>{{ cat.name }}:</strong> {{ cat.total_spent }} ₽</li>
-    {% empty %}
-        <li>Категорий пока нет</li>
-    {% endfor %}
-</ul>
+
+        <div class="block" style="margin-top: 30px;">
+            <h3 class="block-title">Расходы по категориям</h3>
+            <ul style="list-style: none; padding: 0;">
+                {% for cat in categories %}
+                    <li style="padding: 8px 0; border-bottom: 1px solid var(--border);">
+                        <strong>{{ cat.name }}:</strong> {{ cat.total_spent|floatformat:2 }} ₽
+                    </li>
+                {% empty %}
+                    <li style="color: #a0aec0;">Категорий пока нет</li>
+                {% endfor %}
+            </ul>
+        </div>
 
     {% else %}
         <div style="text-align: center; margin-top: 100px;" class="block">
@@ -243,5 +529,21 @@
     {% endif %}
 </div>
 
+<script>
+function filterTx(query) {
+    const q = query.toLowerCase().trim();
+    const items = document.querySelectorAll('#txList .tx-item, #txList .tx-empty');
+    let visible = 0;
+    items.forEach(el => {
+        if (el.classList.contains('tx-empty')) return;
+        const text = el.textContent.toLowerCase();
+        const match = !q || text.includes(q);
+        el.style.display = match ? '' : 'none';
+        if (match) visible++;
+    });
+    const empty = document.querySelector('#txList .tx-empty');
+    if (empty) empty.style.display = visible === 0 ? '' : 'none';
+}
+</script>
 </body>
 </html>

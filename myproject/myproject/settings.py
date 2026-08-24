@@ -10,20 +10,25 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
+import os
 from pathlib import Path
+
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+load_dotenv(BASE_DIR / '.env')
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-veia=kjqwm^dv3e=v7g+&f*v^m&zh&*w9itk-k%_&ed#3r90_c'
+SECRET_KEY = os.environ['SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
 ALLOWED_HOSTS = []
 
@@ -48,6 +53,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'wallet.middleware.request_info_middleware',
+    'wallet.middleware.BlockedUserAgentMiddleware',
 ]
 
 ROOT_URLCONF = 'myproject.urls'
@@ -75,10 +82,33 @@ WSGI_APPLICATION = 'myproject.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.environ.get('POSTGRES_DB', 'finance'),
+        'USER': os.environ.get('POSTGRES_USER', 'finance_user'),
+        'PASSWORD': os.environ['POSTGRES_PASSWORD'],
+        'HOST': os.environ.get('POSTGRES_HOST', '127.0.0.1'),
+        'PORT': os.environ.get('POSTGRES_PORT', '5432'),
     }
 }
+
+# Кеш: в docker-compose задаётся REDIS_URL и работает Redis,
+# без него (локальный запуск) используется кеш в памяти процесса
+if os.environ.get('REDIS_URL'):
+    CACHES = {
+        'default': {
+            'BACKEND': 'django_redis.cache.RedisCache',
+            'LOCATION': os.environ['REDIS_URL'],
+            'OPTIONS': {
+                'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+            },
+        }
+    }
+else:
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        }
+    }
 
 
 # Password validation
@@ -120,3 +150,14 @@ AUTH_USER_MODEL = 'wallet.User'
 LOGIN_REDIRECT_URL = 'wallet:index'
 LOGOUT_REDIRECT_URL = 'wallet:login'
 LOGIN_URL = 'wallet:login'
+
+
+BLOCKED_USER_AGENTS = [
+    'curl',
+    'wget',
+    'python-requests',
+    'bot',
+    'spider',
+]
+
+BLOCKED_USER_AGENT_RESPONSE = "Your client is not allowed to access this resource"

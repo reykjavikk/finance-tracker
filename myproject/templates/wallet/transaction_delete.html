@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Финансовый Трекер — Удалить транзакцию</title>
+    <style>
+        :root {
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --text-main: #2d3748;
+            --primary: #4a5568;
+            --danger: #9b2c2c;
+            --border: #e2e8f0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 480px;
+            margin: 40px auto 0 auto;
+        }
+
+        .block {
+            background: var(--card-bg);
+            padding: 25px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            text-align: center;
+        }
+
+        .block-title {
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+            border-bottom: 2px solid var(--bg-color);
+            padding-bottom: 10px;
+        }
+
+        .tx-info {
+            background: #f7fafc;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 20px;
+            font-size: 0.95rem;
+        }
+        .warning-text {
+            color: var(--danger);
+            font-size: 0.85rem;
+            margin-bottom: 20px;
+        }
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            width: 100%;
+            font-weight: 600;
+        }
+        .btn-danger:hover { opacity: 0.9; }
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 15px;
+            color: #718096;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="block">
+        <h3 class="block-title">🗑️ Удалить транзакцию?</h3>
+        <div class="tx-info">
+            {{ transaction.category.name }} — {{ transaction.amount|floatformat:2 }} ₽
+            ({{ transaction.creation|date:"d.m.Y H:i" }})
+        </div>
+        <div class="warning-text">Транзакция будет удалена безвозвратно.</div>
+        <form method="POST" action="">
+            {% csrf_token %}
+            <button type="submit" class="btn-danger">Да, удалить</button>
+        </form>
+        <a href="{% url 'wallet:index' %}" class="back-link">← Отмена</a>
+    </div>
+</div>
+
+</body>
+</html>

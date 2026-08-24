@@ -26,6 +26,12 @@ class TransactionForm(forms.ModelForm):
 
 
 
+class CategoryForm(forms.ModelForm):
+    class Meta:
+        model = Category
+        fields = ['name', 'type']
+
+
 class MyUserRegisterForm(UserCreationForm):
     class Meta(UserCreationForm.Meta):
         model = get_user_model()

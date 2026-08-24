@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Финансовый Трекер — Категории</title>
+    <style>
+        :root {
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --text-main: #2d3748;
+            --primary: #4a5568;
+            --success: #2f855a;
+            --danger: #9b2c2c;
+            --border: #e2e8f0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        h2 { margin: 0; font-weight: 600; }
+
+        .header-links a {
+            color: #718096;
+            text-decoration: none;
+            margin-left: 15px;
+            font-size: 0.9rem;
+        }
+        .header-links a:hover { color: var(--primary); }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .main-content { grid-template-columns: 1fr; }
+        }
+
+        .block {
+            background: var(--card-bg);
+            padding: 25px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+        }
+
+        .block-title {
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+            border-bottom: 2px solid var(--bg-color);
+            padding-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            box-sizing: border-box;
+        }
+        .text-danger {
+            color: var(--danger);
+            font-size: 0.8rem;
+            margin-top: 5px;
+        }
+        .btn-submit {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            width: 100%;
+            font-weight: 600;
+        }
+        .btn-submit:hover { opacity: 0.9; }
+
+        .cat-list { list-style: none; padding: 0; margin: 0; }
+        .cat-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 4px;
+            border-bottom: 1px solid var(--border);
+        }
+        .cat-item:last-child { border-bottom: none; }
+        .cat-name { font-weight: 500; }
+        .cat-type-badge {
+            font-size: 0.65rem;
+            font-weight: 700;
+            padding: 2px 9px;
+            border-radius: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            margin-left: 8px;
+        }
+        .cat-type-badge.income { background: #f0fff4; color: #276749; }
+        .cat-type-badge.outcome { background: #fff5f5; color: #9b2c2c; }
+        .cat-actions a {
+            text-decoration: none;
+            font-size: 0.85rem;
+            margin-left: 8px;
+        }
+        .cat-empty {
+            color: #a0aec0;
+            padding: 8px 0;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h2>Категории 📂</h2>
+        <div class="header-links">
+            <a href="{% url 'wallet:index' %}">← На главную</a>
+            <form action="{% url 'wallet:logout' %}" method="post" style="display: inline;">
+                {% csrf_token %}
+                <button type="submit" style="background: none; border: none; color: #718096; cursor: pointer; font-family: inherit; font-size: 0.9rem; padding: 0;">
+                    Выйти
+                </button>
+            </form>
+        </div>
+    </header>
+
+    <div class="main-content">
+        <div class="block">
+            <h3 class="block-title">Новая категория</h3>
+            <form method="POST" action="">
+                {% csrf_token %}
+                {% for field in form %}
+                    <div class="form-group">
+                        {{ field.label_tag }}
+                        {{ field }}
+                        {% if field.errors %}
+                            <div class="text-danger">
+                                {{ field.errors }}
+                            </div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+                <button type="submit" class="btn-submit">Добавить</button>
+            </form>
+        </div>
+
+        <div class="block">
+            <h3 class="block-title">Мои категории</h3>
+
+            <ul class="cat-list">
+                {% for cat in income_categories %}
+                    <li class="cat-item">
+                        <span>
+                            <span class="cat-name">{{ cat.name }}</span>
+                            <span class="cat-type-badge income">доход</span>
+                        </span>
+                        <span class="cat-actions">
+                            <a href="{% url 'wallet:category_update' cat.pk %}">✏️</a>
+                            <a href="{% url 'wallet:category_delete' cat.pk %}">🗑️</a>
+                        </span>
+                    </li>
+                {% empty %}
+                    <li class="cat-empty">Категорий дохода пока нет</li>
+                {% endfor %}
+
+                {% for cat in outcome_categories %}
+                    <li class="cat-item">
+                        <span>
+                            <span class="cat-name">{{ cat.name }}</span>
+                            <span class="cat-type-badge outcome">расход</span>
+                        </span>
+                        <span class="cat-actions">
+                            <a href="{% url 'wallet:category_update' cat.pk %}">✏️</a>
+                            <a href="{% url 'wallet:category_delete' cat.pk %}">🗑️</a>
+                        </span>
+                    </li>
+                {% empty %}
+                    <li class="cat-empty">Категорий расхода пока нет</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

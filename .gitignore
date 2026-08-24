@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# Виртуальные окружения
+.venv/
+venv/
+
+# IDE
+.idea/
+.vscode/
+
+# Django
+db.sqlite3
+staticfiles/
+
+# Файлы с секретами
+.env
+
+# Логи и временные файлы
+*.log
+
+# ОС
+Thumbs.db
+.DS_Store
+
+# Личный отчёт по проекту
+Отчет_по_проекту.docx
+~$*
